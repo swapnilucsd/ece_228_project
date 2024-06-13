@@ -1,1 +1,1 @@
-# ece_228_project
+# ECE_228_Project

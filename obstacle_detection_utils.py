@@ -110,7 +110,6 @@ def getDistance(img, pt1, pt2):
     return 1 - abs(dist / furthestDistance)
 
 
-# obstacles is output of define_no_landing_zones
 def dist_to_obs(lz, obstacles, img):
     posLz = lz.get("position")
     norm_dists = []

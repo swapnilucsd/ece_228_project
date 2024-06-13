@@ -2,6 +2,7 @@ import torch
 from utils import get_mean_iou, get_pixel_accuracy
 from tqdm import tqdm
 
+
 def train(
     epochs,
     model,
@@ -13,23 +14,6 @@ def train(
     device,
     patch=False,
 ):
-    """
-    Train a model with given parameters, managing both training and validation phases.
-
-    Args:
-        epochs (int): Total number of epochs to train for.
-        model (torch.nn.Module): The neural network model to train.
-        train_loader (DataLoader): DataLoader for training data.
-        val_loader (DataLoader): DataLoader for validation data.
-        criterion: Loss function.
-        optimizer: Optimization algorithm.
-        scheduler: Learning rate scheduler.
-        device (torch.device): Device to train the model on.
-        patch (bool): Whether to use patched inputs (default is False).
-
-    Returns:
-        dict: A dictionary containing training and validation losses and metrics.
-    """
     model.to(device)
     train_losses, val_losses, train_iou, val_iou, train_acc, val_acc = (
         [],
@@ -111,7 +95,6 @@ def train(
 def print_epoch_stats(
     epoch, epochs, train_loss, val_loss, train_iou, val_iou, train_acc, val_acc
 ):
-    """Prints the statistics for the epoch."""
     print(
         f"Epoch {epoch+1}/{epochs}: Train Loss: {train_loss:.3f}, Val Loss: {val_loss:.3f}, "
         f"Train IoU: {train_iou:.3f}, Val IoU: {val_iou:.3f}, Train Acc: {train_acc:.3f}, Val Acc: {val_acc:.3f}"
@@ -119,7 +102,6 @@ def print_epoch_stats(
 
 
 def validate(model, loader, criterion, device, patch):
-    """Validation step to evaluate the model on the validation dataset."""
     model.eval()
     total_loss, total_iou, total_acc = 0.0, 0.0, 0.0
     with torch.no_grad():

@@ -4,17 +4,14 @@ import matplotlib.pyplot as plt
 
 
 def load_image(path):
-    """Load an image from a file path."""
     return cv2.imread(path)
 
 
 def convert_to_grayscale(image):
-    """Convert an image to grayscale."""
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 
 def draw_optical_flow_vectors(image, points1, points2):
-    """Draw optical flow vectors on an image."""
     for pt1, pt2 in zip(points1, points2):
         pt1 = tuple(np.round(pt1).astype(int))
         pt2 = tuple(np.round(pt2).astype(int))
@@ -23,7 +20,6 @@ def draw_optical_flow_vectors(image, points1, points2):
 
 
 def feature_matching_and_flow(frame1, frame2):
-    """Perform feature matching and calculate optical flow vectors between two frames."""
     sift = cv2.SIFT_create()
     keypoints1, descriptors1 = sift.detectAndCompute(frame1, None)
     keypoints2, descriptors2 = sift.detectAndCompute(frame2, None)
@@ -48,7 +44,6 @@ def compute_cv_for_tile(flow_vectors):
 
 
 def calculate_dense_optical_flow(frame1, frame2):
-    """Calculate dense optical flow using Farneback's method."""
     gray1 = convert_to_grayscale(frame1)
     gray2 = convert_to_grayscale(frame2)
     flow = cv2.calcOpticalFlowFarneback(gray1, gray2, None, 0.5, 3, 15, 3, 5, 1.2, 0)
@@ -56,17 +51,14 @@ def calculate_dense_optical_flow(frame1, frame2):
 
 
 def analyze_optical_flow(flow, tile_width, tile_height):
-    """Analyze optical flow to detect flat areas based on Coefficient of Variation."""
     h, w = flow.shape[:2]
     cv_values = np.zeros((h // tile_height, w // tile_width))
     for i in range(0, h, tile_height):
         for j in range(0, w, tile_width):
             tile_flows = flow[i : i + tile_height, j : j + tile_width].reshape(-1, 2)
-            cv = compute_cv_for_tile(
-                tile_flows
-            )  # Assuming compute_cv_for_tile is defined
+            cv = compute_cv_for_tile(tile_flows)
             cv_values[i // tile_height, j // tile_width] = cv if cv is not None else 0
-    return cv_values > 0.1  # Threshold for flat areas
+    return cv_values > 0.1
 
 
 def outputimage(flat_areas, frame2, tile_width, tile_height):
@@ -82,7 +74,6 @@ def outputimage(flat_areas, frame2, tile_width, tile_height):
 
 
 def display_results(frames, titles, figsize=(10, 5), cmap=None):
-    """Display a list of frames with titles."""
     plt.figure(figsize=figsize)
     for i, (frame, title) in enumerate(zip(frames, titles), start=1):
         plt.subplot(1, len(frames), i)
@@ -126,7 +117,6 @@ def final_heatmap(heat_map, segmentation):
 def optical_flow_heatmap(frame1, frame2):
     tile_width = 4
     tile_height = 4
-    # frame1, frame2 = load_image(img1_path), load_image(img2_path)
     points1, points2 = feature_matching_and_flow(frame1, frame2)
     flow_image = draw_optical_flow_vectors(frame1.copy(), points1, points2)
     flow = calculate_dense_optical_flow(frame1, frame2)
@@ -146,5 +136,3 @@ def final_combined_heatmap(heat_map, segmentation):
     final = final_heatmap(heat_map, segmentation)
     display_results([final], ["Final heatmap"])
     return final
-
-
